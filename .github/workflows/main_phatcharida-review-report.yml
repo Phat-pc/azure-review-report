@@ -53,10 +53,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
-    permissions:
-      id-token: write #This is required for requesting the JWT
-      contents: read #This is required for actions/checkout
-
+    
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
@@ -68,13 +65,6 @@ jobs:
           unzip release.zip
           rm release.zip
         
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_C4A6E560AE93478AB9D4A3B10F0D86F0 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_EC96801EC2A44B978E3594A944077E5B }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_D902BAED04B44FDAB28CC378375A49AC }}
-
       - name: 'Deploy to Azure Functions'
         uses: Azure/functions-action@v1
         id: deploy-to-function
@@ -82,4 +72,4 @@ jobs:
           app-name: 'phatcharida-review-report'
           slot-name: 'Production'
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-          
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_6ABA8E8A3C364444A4B8F25D8ED8D674 }}
